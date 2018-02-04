@@ -24,10 +24,10 @@ reuniformTime <- function(time_uniformed) {
 	hour <- round(time_uniformed/60)
 	minute <- round(time_uniformed%%60)
 	clock <- ""
-	if (hour < 11) {
-		clock <- "A"
+	if (hour < 12) {
+		clock <- "AM"
 	} else {
-		clock <- "P"
+		clock <- "PM"
 	}
 	if (hour < 10) {
 		hour <- paste("0", hour, sep = "")
@@ -35,7 +35,7 @@ reuniformTime <- function(time_uniformed) {
 	if (minute < 10) {
 		minute <- paste("0", minute, sep = "")
 	}
-	return (paste(hour, minute, clock, sep = ""))
+	return (paste(hour, minute, clock))
 }
 
 nyc_data <- read.csv("Parking_Violations_Issued_sampled_new.csv", head = TRUE, sep = ",", quote = "\"")
