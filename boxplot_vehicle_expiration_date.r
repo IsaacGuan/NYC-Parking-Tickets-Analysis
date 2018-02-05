@@ -42,7 +42,12 @@ uniformDate <- function(vehicle_expiration_date) {
 reuniformDate <- function(days) {
 	year <- floor(days/365)
 	month <- floor((days%%365)/30+1)
-	day <- round((days%%365)%%30)
+	if (month > 12) {
+		month <- 12
+		day <- 31
+	} else {
+		day <- round((days%%365)%%30)
+	}
 	return (paste(year, month, day, sep = "-"))
 }
 
