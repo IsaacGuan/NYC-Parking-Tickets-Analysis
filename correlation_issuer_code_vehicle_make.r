@@ -7,7 +7,7 @@ normalize <- function(x) {
 }
 
 uniformIssuerAndVehicle <- function (issuer_code_vehicle_make) {
-	df <- issuer_code_vehicle_make[FALSE,]
+	issuer_code <- c()
 	vehicle_make <- c()
 	for (i in 1:nrow(issuer_code_vehicle_make)) {
 		if (issuer_code_vehicle_make[i,"Issuer.Code"] != 0 && trim(issuer_code_vehicle_make[i,"Vehicle.Make"]) != "") {
@@ -22,11 +22,11 @@ uniformIssuerAndVehicle <- function (issuer_code_vehicle_make) {
 			} else {
 				vehicle_make[length(vehicle_make)+1] <- trim(issuer_code_vehicle_make[i,"Vehicle.Make"])
 			}
-			current_row = nrow(df) + 1
-			df[current_row, "Issuer.Code"] = issuer_code_vehicle_make[i,"Issuer.Code"]
+			issuer_code[length(issuer_code)+1] <- issuer_code_vehicle_make[i,"Issuer.Code"]
 		}
 	}
-	df[["Vehicle.Make"]] <- vehicle_make
+	df <- data.frame(issuer_code, vehicle_make)
+	names(df) <- c("Issuer.Code", "Vehicle.Make")
 	return (df)
 }
 

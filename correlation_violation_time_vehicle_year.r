@@ -5,27 +5,27 @@ normalize <- function(x) {
 }
 
 uniformTimeAndYear <- function(violation_time_vehicle_year) {
-	df <- violation_time_vehicle_year[FALSE,]
-	time <- c()
+	violation_time <- c()
+	vehicle_year <- c()
 	for (i in 1:nrow(violation_time_vehicle_year)) {
 		hour <- as.numeric(substr(violation_time_vehicle_year[i,"Violation.Time"], 1, 2))
 		minute <- as.numeric(substr(violation_time_vehicle_year[i,"Violation.Time"], 3, 4))
 		clock <- substr(violation_time_vehicle_year[i,"Violation.Time"], 5, 5)
 		if (violation_time_vehicle_year[i,"Vehicle.Year"] != 0) {
 			if (clock == "A"){
-				time[length(time)+1] <- hour*60 + minute
+				violation_time[length(violation_time)+1] <- hour*60 + minute
 			} else if (clock == "P") {
 				if (hour == 12) {
-					time[length(time)+1] <- hour*60 + minute
+					violation_time[length(violation_time)+1] <- hour*60 + minute
 				} else {
-					time[length(time)+1] <- (hour+12)*60 + minute
+					violation_time[length(violation_time)+1] <- (hour+12)*60 + minute
 				}
 			}
-			current_row = nrow(df) + 1
-			df[current_row,"Vehicle.Year"] <- violation_time_vehicle_year[i,"Vehicle.Year"]
+			vehicle_year[length(vehicle_year)+1] <- violation_time_vehicle_year[i,"Vehicle.Year"]
 		}
 	}
-	df[["Violation.Time"]] <- time
+	df <- data.frame(violation_time, vehicle_year)
+	names(df) <- c("Violation.Time", "Vehicle.Year")
 	return (df)
 }
 
