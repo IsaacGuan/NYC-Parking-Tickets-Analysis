@@ -1,5 +1,9 @@
 setwd("d:/data mining and concept learning/NYC-Parking-Tickets-Analysis/datasets")
 
+normalize <- function(x) {
+	return ((x - min(x)) / (max(x) - min(x)))
+}
+
 uniformTimeAndYear <- function(violation_time_vehicle_year) {
 	df <- violation_time_vehicle_year[FALSE,]
 	time <- c()
@@ -57,11 +61,16 @@ violation_time_vehicle_year_uniformed <- uniformTimeAndYear(violation_time_vehic
 violation_time_vehicle_year_uniformed_sorted <- violation_time_vehicle_year_uniformed[order(violation_time_vehicle_year_uniformed[,1]), ]
 violation_time <- violation_time_vehicle_year_uniformed_sorted[["Violation.Time"]]
 vehicle_year <- violation_time_vehicle_year_uniformed_sorted[["Vehicle.Year"]]
+violation_time_vehicle_year_uniformed_sorted_normalized <- as.data.frame(lapply(violation_time_vehicle_year_uniformed_sorted[1:2], normalize))
 jpeg(file = "d:/data mining and concept learning/NYC-Parking-Tickets-Analysis/diagrams/correlation_violation_time_vehicle_year.jpg")
-plot(violation_time, vehicle_year, main = "Correlation between Violation Time and Vehicle Year", xlab = "Violation Time", ylab = "Vehicle Year" , col="blue", pch = 4, xaxt = "n")
+plot(violation_time_vehicle_year_uniformed_sorted, main = "Correlation between Violation Time and Vehicle Year", xlab = "Violation Time", ylab = "Vehicle Year" , col="blue", pch = 4, xaxt = "n")
 x_minutes <- axTicks(1)
 x_times_reuniformed <- c()
 for (i in 1:length(x_minutes)) {
 	x_times_reuniformed[i] <- reuniformTime(x_minutes[i])
 }
 axis(1, at = x_minutes, labels = x_times_reuniformed)
+cor.test(violation_time, vehicle_year, method = c("pearson"))
+cor.test(violation_time, vehicle_year, method = c("kendall"))
+cor.test(violation_time, vehicle_year, method = c("spearman"), exact = FALSE)
+chisq.test(violation_time_vehicle_year_uniformed_sorted_normalized, simulate.p.value = TRUE)
