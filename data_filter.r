@@ -138,9 +138,59 @@ platetypeFilter <- function (nyc_data) {
 	return (nyc_data_filtered)
 }
 
+vehiclebodytypeFilter <- function (nyc_data) {
+	vehicle_body_type <- c()
+	data_to_drop <- c()
+	nyc_data_filtered <- nyc_data
+	for (i in 1:nrow(nyc_data)) {
+		if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "") {
+			data_to_drop[length(data_to_drop)+1] <- i
+		} else {
+			if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "2DSD"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "2 DR"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "2D") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "2DSD"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "4DSD"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4 DO"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4 DR"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4D"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4D S"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4H"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "4S") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "4DSD"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "MOTO"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "MOT") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "MOTO"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "MCY"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "MC") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "MCY"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "PICK"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "PK") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "PICK"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "SUBN"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "SU") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "SUBN"
+			} else if (trim(nyc_data[i, "Vehicle.Body.Type"]) == "UTIL"
+				|| trim(nyc_data[i, "Vehicle.Body.Type"]) == "UT") {
+				vehicle_body_type[length(vehicle_body_type)+1] <- "UTIL"
+			} else {
+				vehicle_body_type[length(vehicle_body_type)+1] <- trim(nyc_data[i, "Vehicle.Body.Type"])
+			}
+		}
+	}
+	if (length(data_to_drop) > 0) {
+		nyc_data_filtered <- nyc_data[-data_to_drop,]
+	}
+	nyc_data_filtered[["Vehicle.Body.Type"]] <- vehicle_body_type
+	return (nyc_data_filtered)
+}
+
 nyc_data <- read.csv("Parking_Violations_Issued_sampled_new.csv", head = TRUE, sep = ",", quote = "\"")
 nyc_data_filtered <- vehiclecolorFilter(nyc_data)
 nyc_data_filtered <- platetypeFilter(nyc_data_filtered)
+nyc_data_filtered <- vehiclebodytypeFilter(nyc_data_filtered)
+#table(nyc_data_filtered[["Vehicle.Body.Type"]])
+#table(nyc_data_filtered[["Vehicle.Body.Type"]])
 #table(nyc_data_filtered[["Vehicle.Color"]])
 #table(nyc_data_filtered[["Plate.Type"]])
 write.csv(nyc_data_filtered, "Parking_Violations_Issued_sampled_new_filtered.csv")
