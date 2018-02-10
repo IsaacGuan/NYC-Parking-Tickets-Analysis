@@ -185,12 +185,57 @@ vehiclebodytypeFilter <- function (nyc_data) {
 	return (nyc_data_filtered)
 }
 
+violationcountyFilter <- function (nyc_data) {
+	data_to_drop <- c()
+	nyc_data_filtered <- nyc_data
+	for (i in 1:nrow(nyc_data)) {
+		if (trim(nyc_data[i, "Violation.County"]) == "") {
+			data_to_drop[length(data_to_drop)+1] <- i
+		}
+	}
+	if (length(data_to_drop) > 0) {
+		nyc_data_filtered <- nyc_data[-data_to_drop,]
+	}
+	return (nyc_data_filtered)
+}
+
+vehiclemakeFilter <- function (nyc_data) {
+	vehicle_make <- c()
+	data_to_drop <- c()
+	nyc_data_filtered <- nyc_data
+	for (i in 1:nrow(nyc_data)) {
+		if (trim(nyc_data[i, "Vehicle.Make"]) == "") {
+			data_to_drop[length(data_to_drop)+1] <- i
+		} else {
+			if (trim(nyc_data[i, "Vehicle.Make"]) == "FR LI") {
+				vehicle_make[length(vehicle_make)+1] <- "FR/LI"
+			} else if (trim(nyc_data[i, "Vehicle.Make"]) == "HIN") {
+				vehicle_make[length(vehicle_make)+1] <- "HINO"
+			} else if (trim(nyc_data[i, "Vehicle.Make"]) == "UTIL") {
+				vehicle_make[length(vehicle_make)+1] <- "UTILI"
+			} else if (trim(nyc_data[i, "Vehicle.Make"]) == "VAN H") {
+				vehicle_make[length(vehicle_make)+1] <- "VANHO"
+			} else {
+				vehicle_make[length(vehicle_make)+1] <- trim(nyc_data[i, "Vehicle.Make"])
+			}
+		}
+	}
+	if (length(data_to_drop) > 0) {
+		nyc_data_filtered <- nyc_data[-data_to_drop,]
+	}
+	nyc_data_filtered[["Vehicle.Make"]] <- vehicle_make
+	return (nyc_data_filtered)
+}
+
 nyc_data <- read.csv("Parking_Violations_Issued_sampled_new.csv", head = TRUE, sep = ",", quote = "\"")
 nyc_data_filtered <- vehiclecolorFilter(nyc_data)
 nyc_data_filtered <- platetypeFilter(nyc_data_filtered)
 nyc_data_filtered <- vehiclebodytypeFilter(nyc_data_filtered)
-#table(nyc_data_filtered[["Vehicle.Body.Type"]])
-#table(nyc_data_filtered[["Vehicle.Body.Type"]])
+nyc_data_filtered <- violationcountyFilter(nyc_data_filtered)
+nyc_data_filtered <- vehiclemakeFilter(nyc_data_filtered)
 #table(nyc_data_filtered[["Vehicle.Color"]])
 #table(nyc_data_filtered[["Plate.Type"]])
+#table(nyc_data_filtered[["Vehicle.Body.Type"]])
+#table(nyc_data_filtered[["Violation.County"]])
+#table(nyc_data_filtered[["Vehicle.Make"]])
 write.csv(nyc_data_filtered, "Parking_Violations_Issued_sampled_new_filtered.csv")
