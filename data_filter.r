@@ -246,6 +246,20 @@ registrationstateFilter <- function (nyc_data) {
 	return (nyc_data_filtered)
 }
 
+issuerprecinctFilter <- function (nyc_data) {
+	issuer_precinct <- c()
+	nyc_data_filtered <- nyc_data
+	for (i in 1:nrow(nyc_data)) {
+		if (nyc_data[i, "Issuer.Precinct"] == 0) {
+			issuer_precinct[length(issuer_precinct)+1] <- ""
+		} else {
+			issuer_precinct[length(issuer_precinct)+1] <- nyc_data[i, "Issuer.Precinct"]
+		}
+	}
+	nyc_data_filtered[["Issuer.Precinct"]] <- issuer_precinct
+	return (nyc_data_filtered)
+}
+
 nyc_data <- read.csv("Parking_Violations_Issued_sampled_new.csv", head = TRUE, sep = ",", quote = "\"")
 nyc_data_filtered <- vehiclecolorFilter(nyc_data)
 nyc_data_filtered <- platetypeFilter(nyc_data_filtered)
@@ -255,6 +269,7 @@ nyc_data_filtered <- vehicleyearFilter(nyc_data_filtered)
 nyc_data_filtered <- issuercodeFilter(nyc_data_filtered)
 nyc_data_filtered <- violationprecinctFilter(nyc_data_filtered)
 nyc_data_filtered <- registrationstateFilter(nyc_data_filtered)
+nyc_data_filtered <- issuerprecinctFilter(nyc_data_filtered)
 #table(nyc_data_filtered[["Vehicle.Color"]])
 #table(nyc_data_filtered[["Plate.Type"]])
 #table(nyc_data_filtered[["Vehicle.Body.Type"]])
@@ -262,4 +277,5 @@ nyc_data_filtered <- registrationstateFilter(nyc_data_filtered)
 #table(nyc_data_filtered[["Vehicle.Year"]])
 #table(nyc_data_filtered[["Issuer.Code"]])
 #table(nyc_data_filtered[["Violation.Precinct"]])
+#table(nyc_data_filtered[["Issuer.Precinct"]])
 write.csv(nyc_data_filtered, "Parking_Violations_Issued_sampled_new_filtered.csv")
