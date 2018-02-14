@@ -10,3 +10,5 @@ nyc_data_cleaned_factored <- lapply(nyc_data_cleaned, as.factor)
 target <- nyc_data_cleaned_factored[["Vehicle.Color"]]
 result_gainratio <- GainRatioAttributeEval(target~., nyc_data_cleaned_factored)
 summary(result_gainratio)
+result_infogain <- InfoGainAttributeEval(target~., nyc_data_cleaned_factored)
+summary(result_infogain)
