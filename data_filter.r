@@ -260,6 +260,27 @@ issuerprecinctFilter <- function (nyc_data) {
 	return (nyc_data_filtered)
 }
 
+violationtimeFilter <- function (nyc_data) {
+	violation_time <- c()
+	nyc_data_filtered <- nyc_data
+	for (i in 1:nrow(nyc_data)) {
+		hour <- as.numeric(substr(nyc_data[i, "Violation.Time"], 1, 2))
+		minute <- as.numeric(substr(nyc_data[i, "Violation.Time"], 3, 4))
+		clock <- substr(nyc_data[i, "Violation.Time"], 5, 5)
+		if (clock == "A") {
+			violation_time[i] <- hour*60 + minute
+		} else if (clock == "P") {
+			if (hour == 12) {
+				violation_time[i] <- hour*60 + minute
+			} else {
+				violation_time[i] <- (hour+12)*60 + minute
+			}
+		}
+	}
+	nyc_data_filtered[["Violation.Time"]] <- violation_time
+	return (nyc_data_filtered)
+}
+
 nyc_data <- read.csv("Parking_Violations_Issued_sampled_new.csv", head = TRUE, sep = ",", quote = "\"")
 nyc_data_filtered <- vehiclecolorFilter(nyc_data)
 nyc_data_filtered <- platetypeFilter(nyc_data_filtered)
@@ -270,6 +291,7 @@ nyc_data_filtered <- issuercodeFilter(nyc_data_filtered)
 nyc_data_filtered <- violationprecinctFilter(nyc_data_filtered)
 nyc_data_filtered <- registrationstateFilter(nyc_data_filtered)
 nyc_data_filtered <- issuerprecinctFilter(nyc_data_filtered)
+nyc_data_filtered <- violationtimeFilter(nyc_data_filtered)
 #table(nyc_data_filtered[["Vehicle.Color"]])
 #table(nyc_data_filtered[["Plate.Type"]])
 #table(nyc_data_filtered[["Vehicle.Body.Type"]])
@@ -278,4 +300,5 @@ nyc_data_filtered <- issuerprecinctFilter(nyc_data_filtered)
 #table(nyc_data_filtered[["Issuer.Code"]])
 #table(nyc_data_filtered[["Violation.Precinct"]])
 #table(nyc_data_filtered[["Issuer.Precinct"]])
+#table(nyc_data_filtered[["Violation.Time"]])
 write.csv(nyc_data_filtered, "Parking_Violations_Issued_sampled_new_filtered.csv")
